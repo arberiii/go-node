@@ -11,8 +11,3 @@ func TestNewRandomNodeID(t *testing.T) {
 		t.Fatal("no two ids should be equal")
 	}
 }
-
-func TestPeer_StartServer(t *testing.T) {
-	p := NewPeer(3000, []byte{127, 0, 0, 1})
-	p.StartServer(nil, nil)
-}
