@@ -1,9 +1,7 @@
 package peer
 
 import (
-
 	"crypto/rand"
-	"fmt"
 	"log"
 	"net"
 
@@ -46,7 +44,7 @@ func NewPeer(port int, addr []byte) *Peer {
 	return &p
 }
 
-func (p *Peer) StartServer(handle func([]byte), reply func(*net.UDPAddr)) {
+func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error) {
 	addr := &net.UDPAddr{IP: p.Addr, Port: p.Port, Zone: ""}
 	ServerConn, err := net.ListenUDP("udp", addr)
 	if err != nil {
@@ -58,11 +56,14 @@ func (p *Peer) StartServer(handle func([]byte), reply func(*net.UDPAddr)) {
 
 	for {
 		_, remoteAddr, err := ServerConn.ReadFromUDP(buffer)
-		fmt.Println(err)
+		if err != nil {
+			log.Fatal(err)
+		}
 		// handle the message
-		handle(buffer)
-		if reply != nil {
-			reply(remoteAddr)
+		err = handle(buffer,ServerConn, remoteAddr)
+
+		if err != nil {
+			go errResponse(err, ServerConn, remoteAddr)
 		}
 	}
 }
@@ -77,4 +78,9 @@ func (p *Peer) Send(b []byte, raddr *net.UDPAddr) error {
 	ClientConn.Write(b)
 
 	return nil
+}
+
+// error is not handled as there is nothing to do if package is not send
+func errResponse(err error, conn *net.UDPConn, addr *net.UDPAddr) {
+	conn.WriteToUDP([]byte(err.Error()), addr)
 }
