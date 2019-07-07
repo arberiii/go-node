@@ -61,8 +61,8 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error)
 		}
 		// handle the message
 		err = handle(buffer,ServerConn, remoteAddr)
-
 		if err != nil {
+			log.Println(err)
 			go errResponse(err, ServerConn, remoteAddr)
 		}
 	}
