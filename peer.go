@@ -70,17 +70,17 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 	}
 }
 
-func (p *Peer) Send(b []byte, raddr *net.UDPAddr) error {
-	ClientConn, err := net.DialUDP("udp", &net.UDPAddr{IP: p.Addr, Port: p.Port, Zone: ""}, raddr)
-	if err != nil {
-		return err
-	}
-	defer ClientConn.Close()
-
-	ClientConn.Write(b)
-
-	return nil
-}
+//func (p *Peer) Send(b []byte, raddr *net.UDPAddr) error {
+//	ClientConn, err := net.DialUDP("udp", &net.UDPAddr{IP: p.Addr, Port: p.Port, Zone: ""}, raddr)
+//	if err != nil {
+//		return err
+//	}
+//	defer ClientConn.Close()
+//
+//	ClientConn.Write(b)
+//
+//	return nil
+//}
 
 // error is not handled as there is nothing to do if package is not send
 func errResponse(err error, conn *net.UDPConn, addr *net.UDPAddr) {
