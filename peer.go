@@ -44,7 +44,7 @@ func NewPeer(port int, addr []byte) *Peer {
 	return &p
 }
 
-func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error, periodicTask func()) {
+func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error, periodicTask func(conn *net.UDPConn)) {
 	addr := &net.UDPAddr{IP: p.Addr, Port: p.Port, Zone: ""}
 	ServerConn, err := net.ListenUDP("udp", addr)
 	if err != nil {
@@ -54,7 +54,7 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 	defer ServerConn.Close()
 	buffer := make([]byte, 1024)
 
-	periodicTask()
+	periodicTask(ServerConn)
 
 	for {
 		_, remoteAddr, err := ServerConn.ReadFromUDP(buffer)
