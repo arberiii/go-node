@@ -8,6 +8,8 @@ import (
 	"github.com/mr-tron/base58/base58"
 )
 
+// Peer is composed of three parts: ID which is a uniquely identifier of a peer,
+// Addr is the UDP address, Port is the port which the peer is listening
 type Peer struct {
 	ID
 	Addr []byte
@@ -18,6 +20,7 @@ const IDLength = 20
 
 type ID []byte
 
+// NewRandomNodeID generates a random ID
 func NewRandomNodeID() ID {
 	buffer := make([]byte, IDLength)
 	_, err := rand.Read(buffer)
@@ -44,6 +47,8 @@ func NewPeer(port int, addr []byte) *Peer {
 	return &p
 }
 
+// StartServer listen and serves UDP request directed to the peer. It takes two functions as parameters
+// handle(which handles the new requests) and periodicTask(its a place holder for the callee to use for periodic task)
 func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error, periodicTask func(conn *net.UDPConn)) {
 	addr := &net.UDPAddr{IP: p.Addr, Port: p.Port, Zone: ""}
 	ServerConn, err := net.ListenUDP("udp", addr)
@@ -65,7 +70,6 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 		err = handle(buffer,ServerConn, remoteAddr)
 		if err != nil {
 			log.Println(err)
-			go errResponse(err, ServerConn, remoteAddr)
 		}
 	}
 }
@@ -81,8 +85,3 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 //
 //	return nil
 //}
-
-// error is not handled as there is nothing to do if package is not send
-func errResponse(err error, conn *net.UDPConn, addr *net.UDPAddr) {
-	conn.WriteToUDP([]byte(err.Error()), addr)
-}
