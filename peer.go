@@ -73,15 +73,3 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 		}
 	}
 }
-
-//func (p *Peer) Send(b []byte, raddr *net.UDPAddr) error {
-//	ClientConn, err := net.DialUDP("udp", &net.UDPAddr{IP: p.Addr, Port: p.Port, Zone: ""}, raddr)
-//	if err != nil {
-//		return err
-//	}
-//	defer ClientConn.Close()
-//
-//	ClientConn.Write(b)
-//
-//	return nil
-//}
