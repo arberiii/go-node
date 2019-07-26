@@ -4,7 +4,6 @@ import (
 	"crypto/rand"
 	"log"
 	"net"
-	"sync"
 
 	"github.com/mr-tron/base58/base58"
 )
@@ -61,6 +60,7 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 	buffer := make([]byte, 1024)
 
 	periodicTask(ServerConn)
+
 	for {
 		_, remoteAddr, err := ServerConn.ReadFromUDP(buffer)
 		if err != nil {
