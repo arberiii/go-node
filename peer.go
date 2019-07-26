@@ -57,7 +57,7 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 	}
 	// handle the error
 	defer ServerConn.Close()
-	buffer := make([]byte, 1024)
+	buffer := make([]byte, 102400)
 
 	periodicTask(ServerConn)
 
