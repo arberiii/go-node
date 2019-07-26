@@ -61,19 +61,15 @@ func (p *Peer) StartServer(handle func([]byte, *net.UDPConn,*net.UDPAddr) error,
 	buffer := make([]byte, 1024)
 
 	periodicTask(ServerConn)
-	var mux sync.Mutex
 	for {
 		_, remoteAddr, err := ServerConn.ReadFromUDP(buffer)
 		if err != nil {
 			log.Fatal(err)
 		}
 		// handle the message
-		mux.Lock()
 		err = handle(buffer,ServerConn, remoteAddr)
 		if err != nil {
-			mux.Unlock()
 			log.Println(err)
 		}
-		mux.Unlock()
 	}
 }
